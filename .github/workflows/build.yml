@@ -1,0 +1,40 @@
+name: started_project_webpack
+
+on:
+  push:
+    branches: [ webpack ]
+#  pull_request:
+#    branches: [ master ]
+
+jobs:
+  started_project_webpack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: NPM install
+        run: rm -rf ~/.npm && npm install
+
+      - name: NPM run build
+        run: npm run build
+
+      - name: Uploading result build
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist
+
+      - name: Backup ~/.npm as ~/.npm.tar.xz
+        run: tar cvf ~/.npm.tar.xz ~/.npm --use-compress-program='xz -9'
+
+      - name: Uploading ~/.npm.tar.xz
+        uses: actions/upload-artifact@v3
+        with:
+          name: npm.tar.xz
+          path: ~/.npm.tar.xz
